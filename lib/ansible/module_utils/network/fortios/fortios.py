@@ -27,6 +27,7 @@
 # USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 #
 import os
+import sys
 import time
 import traceback
 
@@ -87,7 +88,10 @@ def backup(module, running_config):
     else:
         filename = '%s/%s_config.%s' % (backup_path, module.params['host'], tstamp)
     try:
-        open(filename, 'w').write(running_config)
+        if sys.version_info[0] == 3:
+            open(filename, 'w').write(running_config)
+        else:
+            open(filename, 'w').write(running_config.encode('utf-8'))
     except Exception:
         module.fail_json(msg="Can't create backup file {0} Permission denied ?".format(filename))
 
